@@ -63,6 +63,7 @@
 5) Rejection Reason make sure it exists in the JSON body however you can leave it as "" because by default it will be set to null if the patent is verified
 ### In case you want to reject the patent change the status to "rejected" and any reason you want
 Example JSON Body to send 
+
 {
 	"patentNumber":"5",
 	"verifierId":"verifier3@nbe.com",

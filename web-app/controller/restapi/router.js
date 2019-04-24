@@ -66,9 +66,13 @@ router.get('/fabric/admin/getRegistries*', hlcAdmin.getRegistries);
 router.post('/fabric/admin/getMembers*', hlcAdmin.getMembers);
 router.post('/fabric/admin/getAssets*', hlcAdmin.getAssets);
 router.post('/fabric/admin/addMember*', hlcAdmin.addMember);
+router.post('/fabric/admin/registerMember*', hlcAdmin.registerMember);
 
 // router requests specific to the participant
 router.get('/fabric/client/getItemTable*', hlcClient.getItemTable);
 router.post('/fabric/client/getMyOrders*', hlcClient.getMyOrders);
 router.post('/fabric/client/addOrder*', hlcClient.addOrder);
 router.post('/fabric/client/orderAction*', hlcClient.orderAction);
+router.post('/fabric/client/createPatent*', hlcClient.createPatent);
+router.post('/fabric/client/verifyPatent*', hlcClient.verifyPatent);
+router.post('/fabric/client/publishPatent*', hlcClient.publishPatent);

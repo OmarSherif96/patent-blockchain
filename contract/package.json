@@ -1,6 +1,6 @@
 {
     "name": "patent",
-    "version": "0.0.17",
+    "version": "0.0.34",
     "description": "Patent Contract",
     "main": "index.js",
     "engines": {

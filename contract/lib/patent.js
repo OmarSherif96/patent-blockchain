@@ -13,12 +13,16 @@ const patentStatus = {
 class Patent extends Contract {
 
     async instantiate(ctx){
-        let emptyList = [];
-        await ctx.stub.putState('patents',Buffer.from(JSON.stringify([{patent1:"Pat1",patent1ID:"Pat1ID"},{patent2:"Pat2",patent2ID:"Pat2ID"}])));
-        await ctx.stub.putState('owners',Buffer.from(JSON.stringify([{owner1:"Own1",owner1ID:"Own1ID"},{owner2:"Own2",owner2ID:"Own2ID"}])));
-        await ctx.stub.putState('verifiers',Buffer.from(JSON.stringify([{verifier1:"Ver1",verifier1ID:"Ver1ID"},{verifier:"Ver2",verifier2ID:"Ver2ID"}])));
-        await ctx.stub.putState('publishers',Buffer.from(JSON.stringify([{publisher1:"Pub1",publisher1ID:"Pub1ID"},{publisher2:"Pub2",publisher2ID:"Pub2ID"}])));
-        await ctx.stub.putState('auditors',Buffer.from(JSON.stringify([{auditor1:"Aud1",auditor1ID:"Aud1ID"},{auditor2:"Aud2",auditor2ID:"Aud2ID"}])));
+        let owners=[]
+        let verifiers=[]
+        let publishers=[]
+        let auditors=[]
+        let patents=[]
+        await ctx.stub.putState('patents',Buffer.from(JSON.stringify(patents)));
+        await ctx.stub.putState('owners',Buffer.from(JSON.stringify(owners)));
+        await ctx.stub.putState('verifiers',Buffer.from(JSON.stringify(verifiers)));
+        await ctx.stub.putState('publishers',Buffer.from(JSON.stringify(publishers)));
+        await ctx.stub.putState('auditors',Buffer.from(JSON.stringify(auditors)));
 
     }
 
@@ -74,7 +78,7 @@ class Patent extends Contract {
         patents: [],
         }
         await ctx.stub.putState(publisherId, Buffer.from(JSON.stringify(publisher)));
-        //add publisherID to 'publishers' key
+        //add publisherId to 'publishers' key
         let data = await ctx.stub.getState('publishers');
         if (data) {
         let publishers = JSON.parse(data.toString());
@@ -110,129 +114,223 @@ class Patent extends Contract {
         return JSON.stringify(auditor);
         }    
         
-    // async CreatePatent(ctx,ownersIds,verifierId,publisherId,auditorId,patentNumber,patentIndustry,priorArt,details){
+    async CreatePatent(ctx,ownerId,verifierId,patentName,patentNumber,patentIndustry,priorArt,details){
         
-    //     ownersIds.forEach(ownerId => {
-    //     let ownerData = await ctx.stub.getState(ownerId);
-    //     let owner;
-    //     if (ownerData) {
-    //     owner= JSON.parse(ownerData.toString());
-    //     if (owner.type !== 'owner') {
-    //     throw new Error('owner not identified');
-    //     }
-    //     } else {
-    //     throw new Error('owner not found');
-    //     }
-    //     });
-
-    //     let verifierData = await ctx.stub.getState(verifierId);
-    //     let verifier;
-    //     if (verifierData) {
-    //     verifier= JSON.parse(verifierData.toString());
-    //     if (verifier.type !== 'verifier') {
-    //     throw new Error('verifier not identified');
-    //     }
-    //     } else {
-    //     throw new Error('verifier not found');
-    //     }
-
-
-    //     let publisherData = await ctx.stub.getState(publisherId);
-    //     let publisher;
-    //     if (publisherData) {
-    //     publisher= JSON.parse(publisherData.toString());
-    //     if (publisher.type !== 'publisher') {
-    //     throw new Error('publisher not identified');
-    //     }
-    //     } else {
-    //     throw new Error('publisher not found');
-    //     }
+        
+        let ownerData = await ctx.stub.getState(ownerId);
+        let owner;
+        if (ownerData) {
+        owner= JSON.parse(ownerData.toString());
+        if (owner.type !== 'owner') {
+        throw new Error('owner not identified');
+        }
+        } else {
+        throw new Error('owner not found');
+        }
         
 
-    //     let auditorData = await ctx.stub.getState(auditorId);
-    //     let auditor;
-    //     if (auditorData) {
-    //     auditor= JSON.parse(auditorData.toString());
-    //     if (auditor.type !== 'auditor') {
-    //     throw new Error('auditor not identified');
-    //     }
-    //     } else {
-    //     throw new Error('auditor not found');
-    //     }
+        let verifierData = await ctx.stub.getState(verifierId);
+        let verifier;
+        if (verifierData) {
+        verifier= JSON.parse(verifierData.toString());
+        if (verifier.type !== 'verifier') {
+        throw new Error('verifier not identified');
+        }
+        } else {
+        throw new Error('verifier not found');
+        }
 
-
-    //     let patent = {
-    //         patentNumber:patentNumber,
-    //         patentIndustry:patentIndustry,
-    //         priorArt:priorArt,
-    //         details:details,
-    //         status:JSON.stringify(patentStatus.Created),
-    //         ownersIds:ownersIds
-    //     }
-
-    //     owners.forEach(owner=>{
-    //     owner.patents.push(patentNumber);
-    //     await ctx.stub.putState(ownerId, Buffer.from(JSON.stringify(owner)));
-    //     })
-
-    //     verifier.patents.push(patentNumber);
-    //     await ctx.stub.putState(verifierId, Buffer.from(JSON.stringify(verifier)));
-
-    //     await ctx.stub.putState(patentNumber, Buffer.from(JSON.stringify(patent)));
-
-    //     return JSON.stringify(patent);
-    // }  
-    // async VerifyPatent(ctx,patentNumber,ownwersIds,verifierId){
-
-    //     //Get data json
-    //     let data = await ctx.stub.getState(patentNumber);
-    //     let patent;
-    //     if (data) {
-    //         patent = JSON.parse(data.toString());
-    //     } else {
-    //         throw new Error('patent not found');
-    //     }
-
-    //     // verify ownersIds
-    //     ownersIds.forEach(ownerId=>{
-    //     let ownerData = await ctx.stub.getState(ownerId);
-    //     let owner;
-    //     if (ownerData) {
-    //         owner = JSON.parse(ownerData.toString());
-    //         if (owner.type !== 'owner') {
-    //             throw new Error('owner not identified');
-    //         }
-    //     } else {
-    //         throw new Error('Owner not found');
-    //     }
-    //     })
-        
-    //     let verifierData = await ctx.stub.getState(verifierId);
-    //     let verifier;
-    //     if (verifierData) {
-    //     verifier = JSON.parse(verifierData.toString());
-    //     if (verifier.type !== 'verifier') {
-    //     throw new Error('verifier not identified');
-    //     }
-    //     } else {
-    //     throw new Error('verifier not found');
-    //     }
-
-
-    //     if (patent.status == JSON.stringify(patentStatus.Created)) {
-    //         patent.status = JSON.stringify(patentStatus.Verified);
-    //         await ctx.stub.putState(patentNumber, Buffer.from(JSON.stringify(patent)));
+        let patent = {
+            ownerId:ownerId,
+            verifierId:verifierId,
+            publisherId:null,
+            patentName:patentName,
+            patentNumber:patentNumber,
+            patentIndustry:patentIndustry,
+            priorArt:priorArt,
+            details:details,
+            rejectionReason:null,
+            price:null,
+            publishDate:null,
+            status:JSON.stringify(patentStatus.Created),
             
-    //         //add patent to verifier
-    //         verifier.patents.push(patentNumber);
-    //         await ctx.stub.putState(verifierId, Buffer.from(JSON.stringify(verifier)));
-            
-    //         return JSON.stringify(patent);
-    //         } 
-    //         else {
-    //         throw new Error('patent not created');
-    //         }
-    //     }
+        }
+
+        
+        owner.patents.push(patentNumber);
+        await ctx.stub.putState(ownerId, Buffer.from(JSON.stringify(owner)));
+        
+
+        
+        verifier.patents.push(patentNumber);
+        await ctx.stub.putState(verifierId, Buffer.from(JSON.stringify(verifier)));
+        
+        
+
+        await ctx.stub.putState(patentNumber, Buffer.from(JSON.stringify(patent)));
+
+        return JSON.stringify(patent);
+    }  
+    async VerifyPatent(ctx,patentNumber,verifierId,publisherId,status,rejectionReason){
+
+        //Get data json
+        let data = await ctx.stub.getState(patentNumber);
+        let patent;
+        if (data) {
+            patent = JSON.parse(data.toString());
+        } else {
+            throw new Error('patent not found');
+        }
+
+       
+        
+        let verifierData = await ctx.stub.getState(verifierId);
+        let verifier;
+        if (verifierData) {
+        verifier = JSON.parse(verifierData.toString());
+        if (verifier.type !== 'verifier') {
+        throw new Error('verifier not identified');
+        }
+        } else {
+        throw new Error('verifier not found');
+        }
+
+        let publisherData = await ctx.stub.getState(publisherId);
+        let publisher;
+        if (publisherData) {
+            publisher = JSON.parse(publisherData.toString());
+        if (publisher.type !== 'publisher') {
+        throw new Error('publisher not identified');
+        }
+        } else {
+        throw new Error('publisher not found');
+        }
+
+
+        if (status === "verified") {
+        //set patent status and add publisher ID to patent   
+        patent.status = JSON.stringify(patentStatus.Verified);
+        rejectionReason=null;
+        patent.rejectionReason = rejectionReason;
+        patent.publisherId = JSON.stringify(publisherId)
+        await ctx.stub.putState(patentNumber, Buffer.from(JSON.stringify(patent)));
+
+        
+        
+        //add patent to publisher
+        publisher.patents.push(patentNumber);
+        await ctx.stub.putState(publisherId, Buffer.from(JSON.stringify(publisher)));
+        
+        //remove patent from verifier
+        let index = verifier.patents.indexOf(patentNumber)
+        if (index > -1) {
+            verifier.patents.splice(index,1)
+         }
+        await ctx.stub.putState(verifierId, Buffer.from(JSON.stringify(verifier)));
+
+        return JSON.stringify(patent);
+        } 
+        else if(status ==="rejected"){
+        patent.status = JSON.stringify(patentStatus.Rejected);
+        patent.rejectionReason = JSON.stringify(rejectionReason)
+        await ctx.stub.putState(patentNumber, Buffer.from(JSON.stringify(patent)));
+        
+        //remove patent from verifier
+        let index = verifier.patents.indexOf(patentNumber)
+        if (index > -1) {
+            verifier.patents.splice(index,1)
+         }
+        await ctx.stub.putState(verifierId, Buffer.from(JSON.stringify(verifier)));
+        
+        return JSON.stringify(patent);
+        }
+        else {
+        throw new Error('patent not created');
+        }
+        }
+
+        async PublishPatent(ctx,patentNumber,publisherId,verifierId,rejectionReason,status,date,price){
+        
+        let data = await ctx.stub.getState(patentNumber);
+        let patent;
+        if (data) {
+            patent = JSON.parse(data.toString());
+        } else {
+            throw new Error('patent not found');
+        }
+
+        let publisherData = await ctx.stub.getState(publisherId);
+        let publisher;
+        if (publisherData) {
+            publisher = JSON.parse(publisherData.toString());
+        if (publisher.type !== 'publisher') {
+        throw new Error('publisher not identified');
+        }
+        } else {
+        throw new Error('publisher not found');
+        }
+
+        let verifierData = await ctx.stub.getState(verifierId);
+        let verifier;
+        if (verifierData) {
+            verifier = JSON.parse(verifierData.toString());
+        if (verifier.type !== 'verifier') {
+        throw new Error('verifier not identified');
+        }
+        } else {
+        throw new Error('verifier not found');
+        }
+        
+
+        if (status === "published"){
+            //set patent as published
+            patent.status = JSON.stringify(patentStatus.Published);
+            patent.price = JSON.stringify(price);
+            patent.date = JSON.stringify(date);
+            rejectionReason=null;
+            patent.rejectionReason = rejectionReason;
+            await ctx.stub.putState(patentNumber, Buffer.from(JSON.stringify(patent)));
+
+            //remove patent from publisher
+            let index = publisher.patents.indexOf(patentNumber)
+            if (index > -1) {
+                publisher.patents.splice(index,1)
+             }
+            await ctx.stub.putState(publisherId, Buffer.from(JSON.stringify(publisher)));
+            return JSON.stringify(patent);
+
+        }
+
+        else if(status==="rejected"){
+            //rejecting a patent
+            price = null;
+            date = null;
+            patent.price = price;
+            patent.date = date;
+            patent.status = JSON.stringify(patentStatus.Rejected);
+            patent.rejectionReason = JSON.stringify(rejectionReason);
+            await ctx.stub.putState(patentNumber, Buffer.from(JSON.stringify(patent)));
+
+            //return the patent to the verifier
+            verifier.patents.push(patentNumber);
+            await ctx.stub.putState(verifierId, Buffer.from(JSON.stringify(verifier)));
+
+            //remove patent from publisher
+            let index = publisher.patents.indexOf(patentNumber)
+            if (index > -1) {
+                publisher.patents.splice(index,1)
+             }
+            await ctx.stub.putState(publisherId, Buffer.from(JSON.stringify(publisher)));
+
+
+            return JSON.stringify(patent);
+        }
+        
+        else {
+            throw new Error('patent not created');
+            }
+        }
+
 
         // get the state from key
         async GetState(ctx, key) {

@@ -327,24 +327,8 @@ exports.addOrder = async function (req, res, next) {
     
 };
 
-/**
- * adds an order to the blockchain
- * @param {express.req} req - the inbound request object from the client
- * req.body.seller - string with seller id
- * req.body.buyer - string with buyer id
- * req.body.items - array with items for order
- * @param {express.res} res - the outbound response object for communicating back to client
- * @param {express.next} next - an express service to enable post processing prior to responding to the client
- * @returns {Array} an array of assets
- * @function
- */
+
 exports.createPatent = async function (req, res, next) {
-    let method = 'createPatent';
-    console.log(method+' req.body.buyer is: '+req.body.buyer );    
-    let orderNo = '00' + Math.floor(Math.random() * 10000);
-    let order = {};
-    order = svc.createOrderTemplate(order);
-    if (svc.m_connection === null) {svc.createMessageSocket();}
 
     // Main try/catch block
     try {
@@ -357,31 +341,21 @@ exports.createPatent = async function (req, res, next) {
         const network = await gateway.getNetwork('mychannel');
 
         // Get addressability to  contract
-        const contract = await network.getContract('globalfinancing');
+        const contract = await network.getContract('patent');
 
-        let items;
-        let amount;
+        console.log(req.body.ownerId,req.body.verifierId,req.body.patentName,req.body.patentId,req.body.patentIndustry,req.body.priorArt,req.body.details);
         
-        for (let each in req.body.items){
-            (function(_idx, _arr){   
-                _arr[_idx].description = _arr[_idx].itemDescription;
-                order.items.push(JSON.stringify(_arr[_idx]));
-                order.amount += parseInt(_arr[_idx].extendedPrice);
-            })(each, req.body.items);
-        }
-        
-        items = JSON.stringify(order.items);
-        amount = order.amount.toString();
 
-        const createOrderResponse = await contract.submitTransaction('CreateOrder', req.body.buyer, req.body.seller, financeCoID, orderNo, items, amount);
+
+        const createOrderResponse = await contract.submitTransaction('CreatePatent',req.body.ownerId,req.body.verifierId,req.body.patentName,req.body.patentNumber,req.body.patentIndustry,req.body.priorArt,req.body.details);
         console.log('createOrderResponse: ')
         console.log(JSON.parse(createOrderResponse.toString()));
 
         // Disconnect from the gateway
         console.log('Disconnect from Fabric gateway.');
-        console.log('addOrder Complete');
+        console.log('add Patent Complete');
         await gateway.disconnect();
-        res.send({'result': ' order '+orderNo+' successfully added'});
+        res.send({'result': ' Patent '+req.body.patentNumber+' successfully added'});
 
     } catch (error) {
         console.log(`Error processing transaction. ${error}`);
@@ -391,5 +365,83 @@ exports.createPatent = async function (req, res, next) {
     
 };
 
+exports.verifyPatent = async function (req, res, next) {
+
+    // Main try/catch block
+    try {
+
+        // A gateway defines the peers used to access Fabric networks
+        const gateway = new Gateway();
+        await gateway.connect(ccp, { wallet, identity: 'User1@org1.example.com', discovery: { enabled: false } });
+
+        // Get addressability to network
+        const network = await gateway.getNetwork('mychannel');
+
+        // Get addressability to  contract
+        const contract = await network.getContract('patent');
+
+        console.log(req.body.patentNumber,req.body.verifierId,req.body.publisherId,req.body.status,req.body.rejectionReason);
+        
+
+
+        const verifyOrderResponse = await contract.submitTransaction('VerifyPatent',req.body.patentNumber,req.body.verifierId,req.body.publisherId,req.body.status,req.body.rejectionReason);
+        console.log('verifyOrderResponse: ')
+        console.log(JSON.parse(verifyOrderResponse.toString()));
+
+        // Disconnect from the gateway
+        console.log('Disconnect from Fabric gateway.');
+        console.log('add Patent Complete');
+        await gateway.disconnect();
+        let outputBody = {result: ' Patent Number '+req.body.patentNumber,
+        status:req.body.status,
+        rejectionReason:req.body.rejectionReason}
+        res.send(outputBody);
+        
+    } catch (error) {
+        console.log(`Error processing transaction. ${error}`);
+        console.log(error.stack);
+        res.send({'error': error.stack});
+    } 
+    
+};
+
+exports.publishPatent = async function (req, res, next) {
+
+    // Main try/catch block
+    try {
+
+        // A gateway defines the peers used to access Fabric networks
+        const gateway = new Gateway();
+        await gateway.connect(ccp, { wallet, identity: 'User1@org1.example.com', discovery: { enabled: false } });
+
+        // Get addressability to network
+        const network = await gateway.getNetwork('mychannel');
+
+        // Get addressability to  contract
+        const contract = await network.getContract('patent');
+
+        
+
+
+        const publishOrderResponse = await contract.submitTransaction('PublishPatent',req.body.patentNumber,req.body.publisherId,req.body.verifierId,req.body.rejectionReason,req.body.status,req.body.date,req.body.price);
+        console.log('publishOrderResponse: ')
+        console.log(JSON.parse(publishOrderResponse.toString()));
+
+        // Disconnect from the gateway
+        console.log('Disconnect from Fabric gateway.');
+        console.log('add Patent Complete');
+        await gateway.disconnect();
+        let outputBody = {result: ' Patent Number '+req.body.patentNumber,
+        status:req.body.status,
+        rejectionReason:req.body.rejectionReason}
+        res.send(outputBody);
+
+    } catch (error) {
+        console.log(`Error processing transaction. ${error}`);
+        console.log(error.stack);
+        res.send({'error': error.stack});
+    } 
+    
+};
 
 

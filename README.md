@@ -59,6 +59,7 @@
 	"rejectionReason":""<br />
 	
 }<br />
+
 3) Make sure you write the status "verified" 
 4) Patent number, verifier ID & Publisher ID should already exists 
 5) Rejection Reason make sure it exists in the JSON body however you can leave it as "" because by default it will be set to null if the patent is verified

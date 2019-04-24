@@ -47,7 +47,34 @@
 
 }
 
-## 
+## Verify Patent 
+1) Api Url http://localhost:6001/fabric/client/verifyPatent
+2) Example body : 
+{
+	"patentNumber":"5",
+	"verifierId":"verifier3@nbe.com",
+	"publisherId":"publisher1@fgb.com",
+	"status":"verified",
+	"rejectionReason":""
+	
+}
+3) Make sure you write the status "verified" 
+4) Patent number, verifier ID & Publisher ID should already exists 
+5) Rejection Reason make sure it exists in the JSON body however you can leave it as "" because by default it will be set to null if the patent is verified
+### In case you want to reject the patent change the status to "rejected" and any reason you want
+Example JSON Body to send 
+{
+	"patentNumber":"5",
+	"verifierId":"verifier3@nbe.com",
+	"publisherId":"publisher1@fgb.com",
+	"status":"rejected",
+	"rejectionReason":"Doesn't meet verification policy"
+	
+}
+
+
+
+
 
 
 
